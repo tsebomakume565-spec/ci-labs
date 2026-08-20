@@ -1,0 +1,33 @@
+name: Triggers and Inputs Lab
+
+on:
+  # Allows manual triggering from the GitHub Actions tab
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      debug_mode:
+        description: 'Enable debug logging'
+        required: false
+        default: false
+        type: boolean
+
+  # Allows scheduled triggers (e.g., every day at midnight UTC)
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  run-workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log Trigger Details
+        run: |
+          echo "Trigger event type: $GITHUB_EVENT_NAME"
+          echo "Target Environment: ${{ inputs.environment || 'staging (scheduled/push)' }}"
+          echo "Debug Mode: ${{ inputs.debug_mode || 'false' }}"
